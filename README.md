@@ -720,7 +720,7 @@ Contribuições são muito bem-vindas! 🎉
 2. **Clone** seu fork: `git clone https://github.com/seu-usuario/loghub-sdk.git`
 3. **Crie uma branch** para sua feature: `git checkout -b feature/nova-feature`
 4. **Faça suas alterações** e adicione testes
-5. **Commit** suas mudanças seguindo o padrão [Gitmoji](https://gitmoji.dev/)
+5. **Commit** suas mudanças seguindo o padrão [Conventional Commits](https://www.conventionalcommits.org/)
 6. **Push** para a branch: `git push origin feature/nova-feature`
 7. Abra um **Pull Request**
 
@@ -740,36 +740,32 @@ Contribuições são muito bem-vindas! 🎉
 
 ### 📝 Padrão de Commits
 
-Este projeto utiliza o padrão **Gitmoji** para commits. Use emojis semânticos para descrever suas mudanças:
+Este projeto utiliza o padrão **Conventional Commits**. Use prefixos semânticos para descrever suas mudanças:
 
 ```bash
-# Exemplos de commits com Gitmoji
-git commit -m "✨ Adiciona suporte para retry automático"
-git commit -m "🐛 Corrige vazamento de memória na fila"
-git commit -m "📝 Atualiza documentação do appender"
-git commit -m "🔧 Ajusta configuração padrão de timeout"
-git commit -m "✅ Adiciona testes para LogEventConverter"
-git commit -m "♻️ Refatora HttpLogAppender para melhor legibilidade"
-git commit -m "🚀 Melhora performance do envio de logs"
-git commit -m "🔒 Adiciona validação de SSL/TLS"
+git commit -m "feat: adiciona suporte para retry automático"
+git commit -m "fix: corrige vazamento de memória na fila"
+git commit -m "docs: atualiza documentação do appender"
+git commit -m "refactor: melhora legibilidade do HttpLogAppender"
+git commit -m "test: adiciona testes para LogEventConverter"
+git commit -m "perf: melhora performance do envio de logs"
+git commit -m "chore: ajusta configuração padrão de timeout"
 ```
 
-**Principais Gitmojis utilizados:**
+**Tipos de commit:**
 
-| Emoji | Código | Descrição |
-|-------|--------|-----------|
-| ✨ | `:sparkles:` | Nova feature |
-| 🐛 | `:bug:` | Correção de bug |
-| 📝 | `:memo:` | Documentação |
-| 🔧 | `:wrench:` | Configuração |
-| ✅ | `:white_check_mark:` | Testes |
-| ♻️ | `:recycle:` | Refatoração |
-| 🚀 | `:rocket:` | Performance |
-| 🔒 | `:lock:` | Segurança |
-| ⬆️ | `:arrow_up:` | Upgrade de dependência |
-| ⬇️ | `:arrow_down:` | Downgrade de dependência |
+| Tipo | Descrição |
+|------|-----------|
+| `feat` | Nova feature |
+| `fix` | Correção de bug |
+| `docs` | Documentação |
+| `refactor` | Refatoração de código |
+| `test` | Adição ou modificação de testes |
+| `perf` | Melhoria de performance |
+| `chore` | Outras alterações (configs, dependências) |
+| `style` | Formatação de código |
 
-Veja a lista completa em [gitmoji.dev](https://gitmoji.dev/)
+Veja a especificação completa em [conventionalcommits.org](https://www.conventionalcommits.org/)
 
 ## 🙏 Agradecimentos
 
@@ -785,4 +781,3 @@ Obrigado a todos os [contribuidores](https://github.com/loghub/loghub-sdk/graphs
 <p align="center">
   Feito com ❤️ pela comunidade open source
 </p>
-
