@@ -98,8 +98,11 @@ public final class SensitiveDataMasker {
     private static final Pattern CNPJ_PATTERN =
             Pattern.compile("\\b\\d{2}\\.?\\d{3}\\.?\\d{3}/?\\d{4}-?\\d{2}\\b");
 
+    // Requires a separator between the area code and the number, and a mandatory
+    // hyphen before the last 4 digits, so plain unformatted digit sequences
+    // (order IDs, trace IDs, etc.) are not masked as phone numbers.
     private static final Pattern PHONE_PATTERN =
-            Pattern.compile("\\b(?:\\+?\\d{1,3}[- ]?)?\\(?\\d{2,3}\\)?[- ]?\\d{4,5}[- ]?\\d{4}\\b");
+            Pattern.compile("\\b(?:\\+?\\d{1,3}[- ])?\\(?\\d{2,3}\\)?[- ]\\d{4,5}-\\d{4}\\b");
 
     private SensitiveDataMasker() {
         // Utility class
