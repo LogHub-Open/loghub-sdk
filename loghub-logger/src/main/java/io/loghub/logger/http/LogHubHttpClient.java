@@ -13,6 +13,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * HTTP client for sending log events to the LogHub API.
@@ -23,6 +26,7 @@ public class LogHubHttpClient {
     private static final String CONTENT_TYPE_JSON = "application/json";
 
     private final HttpClient httpClient;
+    private final ExecutorService executorService;
     private final ObjectMapper objectMapper;
     private final String endpoint;
     private final String apiKey;
@@ -50,8 +54,18 @@ public class LogHubHttpClient {
         this.timeout = Duration.ofMillis(timeoutMs);
         this.apiKey = apiKey;
 
+        // Dedicated executor so response handling never competes with the host
+        // application for ForkJoinPool.commonPool(), which HttpClient uses by default.
+        ThreadFactory threadFactory = r -> {
+            Thread thread = new Thread(r, "loghub-http-client");
+            thread.setDaemon(true);
+            return thread;
+        };
+        this.executorService = Executors.newFixedThreadPool(2, threadFactory);
+
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(timeout)
+                .executor(executorService)
                 .build();
 
         this.objectMapper = new ObjectMapper();
@@ -103,8 +117,7 @@ public class LogHubHttpClient {
      * Closes the HTTP client and releases resources.
      */
     public void close() {
-        // HttpClient doesn't need explicit closing in Java 11+
-        // but we provide this method for future compatibility
+        executorService.shutdown();
     }
 }
 
