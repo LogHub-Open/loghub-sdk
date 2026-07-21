@@ -195,7 +195,12 @@ public final class SensitiveDataMasker {
             return true;
         }
 
-        // Check if field name contains sensitive keywords
+        // ponytail: partial match (e.g. "userPassword" containing "password") is a
+        // documented/tested feature, so this O(n) substring scan over ~40 short
+        // field names can't be dropped. It only runs on the exact-match miss path.
+        // If this ever shows up in profiling, replace with an Aho-Corasick
+        // automaton built once in the static initializer instead of N String.contains
+        // calls per lookup.
         for (String sensitiveField : SENSITIVE_FIELDS) {
             if (normalizedName.contains(sensitiveField)) {
                 return true;
