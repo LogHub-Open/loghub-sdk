@@ -16,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * HTTP client for sending log events to the LogHub API.
@@ -31,6 +32,7 @@ public class LogHubHttpClient {
     private final String endpoint;
     private final String apiKey;
     private final Duration timeout;
+    private final AtomicLong failedCount = new AtomicLong();
 
     /**
      * Creates a new HTTP client.
@@ -99,18 +101,34 @@ public class LogHubHttpClient {
 
             return httpClient.sendAsync(request, HttpResponse.BodyHandlers.discarding())
                     .thenAccept(response -> {
-                        // Log response status for debugging (non-blocking)
-                        // We don't throw on error status to avoid impacting the application
+                        // We don't throw on error status to avoid impacting the application,
+                        // but we do count it so drop/failure rates are observable.
+                        if (response.statusCode() >= 400) {
+                            failedCount.incrementAndGet();
+                        }
                     })
                     .exceptionally(throwable -> {
                         // Silently handle exceptions - we never want to impact the application
+                        failedCount.incrementAndGet();
                         return null;
                     });
 
         } catch (JsonProcessingException e) {
+            failedCount.incrementAndGet();
             // Return completed future on serialization error
             return CompletableFuture.completedFuture(null);
         }
+    }
+
+    /**
+     * Gets the total number of send attempts that failed (network error,
+     * timeout, serialization error, or a non-2xx HTTP response) since this
+     * client was created.
+     *
+     * @return the failed send count
+     */
+    public long getFailedCount() {
+        return failedCount.get();
     }
 
     /**

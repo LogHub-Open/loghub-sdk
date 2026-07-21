@@ -5,6 +5,7 @@ import io.loghub.logger.http.LogHubHttpClient;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Asynchronous queue manager for log events.
@@ -17,6 +18,7 @@ public final class LogEventQueue {
     private final LogHubHttpClient httpClient;
     private final AtomicBoolean running;
     private final AtomicBoolean started;
+    private final AtomicLong droppedCount = new AtomicLong();
 
     /**
      * Creates a new log event queue.
@@ -60,11 +62,16 @@ public final class LogEventQueue {
      */
     public boolean enqueue(LogEvent logEvent) {
         if (!running.get()) {
+            droppedCount.incrementAndGet();
             return false;
         }
 
         // Non-blocking offer - drop if queue is full
-        return queue.offer(logEvent);
+        boolean enqueued = queue.offer(logEvent);
+        if (!enqueued) {
+            droppedCount.incrementAndGet();
+        }
+        return enqueued;
     }
 
     /**
@@ -136,6 +143,16 @@ public final class LogEventQueue {
      */
     public boolean isRunning() {
         return running.get();
+    }
+
+    /**
+     * Gets the total number of log events dropped because the queue was full
+     * or not running, since this queue was created.
+     *
+     * @return the dropped event count
+     */
+    public long getDroppedCount() {
+        return droppedCount.get();
     }
 }
 
