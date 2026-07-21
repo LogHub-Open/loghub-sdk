@@ -3,10 +3,12 @@ package io.loghub.logger.config;
 /**
  * Configuration holder for LogHub Logger.
  * Stores application-level settings used for log enrichment.
+ *
+ * <p>One instance per {@code HttpLogAppender}: if the config were a shared
+ * singleton, two appenders configured with different application/environment
+ * values in the same JVM would overwrite each other's settings.
  */
 public final class LogHubConfig {
-
-    private static final LogHubConfig INSTANCE = new LogHubConfig();
 
     /**
      * Header name for API Key authentication.
@@ -22,16 +24,7 @@ public final class LogHubConfig {
     private int workerThreads = 1;
     private boolean enabled = true;
 
-    private LogHubConfig() {
-    }
-
-    /**
-     * Gets the singleton instance.
-     *
-     * @return the configuration instance
-     */
-    public static LogHubConfig getInstance() {
-        return INSTANCE;
+    public LogHubConfig() {
     }
 
     public String getApplication() {

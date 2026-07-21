@@ -84,8 +84,8 @@ public class HttpLogAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
             // Resolve API Key from configuration or environment variable
             String resolvedApiKey = resolveApiKey();
 
-            // Initialize configuration
-            config = LogHubConfig.getInstance();
+            // Initialize configuration (one instance per appender, not shared)
+            config = new LogHubConfig();
             config.setApplication(application);
             config.setEnvironment(environment);
             config.setEndpoint(endpoint);
