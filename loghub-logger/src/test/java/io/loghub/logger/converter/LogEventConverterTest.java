@@ -24,7 +24,7 @@ class LogEventConverterTest {
 
     @BeforeEach
     void setUp() {
-        config = LogHubConfig.getInstance();
+        config = new LogHubConfig();
         config.setApplication("test-app");
         config.setEnvironment("test-env");
         converter = new LogEventConverter(config);
